@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة بسيطة للتوظيف</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loader" class="loader-overlay hidden"><div class="spinner"></div></div>
+    <div id="toast-container"></div>
+
+    <nav class="navbar">
+        <div class="logo">منصة <span>بسيطة</span></div>
+        <div class="nav-actions"><button id="theme-toggle" class="theme-btn">☀️</button></div>
+    </nav>
+
+    <main id="app-container">
+        <!-- الصفحة الترحيبية -->
+        <section id="home-page" class="page active">
+            <div class="hero-section">
+                <h1>مرحباً بك في منصة <span>بسيطة</span></h1>
+                <p>اكتشف الفرص الوظيفية التي تناسب طموحاتك ومؤهلاتك بكل بساطة وسهولة.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="navigateTo('login-page')">تسجيل الدخول</button>
+                    <!-- ضع رقمك هنا -->
+                    <a href="https://wa.me/966500000000?text=أهلاً،%20أود%20الاشتراك%20في%20منصة%20بسيطة" target="_blank" class="btn btn-outline">اشترك الآن</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- تسجيل الدخول -->
+        <section id="login-page" class="page">
+            <div class="form-container">
+                <h2>تسجيل الدخول</h2>
+                <form id="login-form">
+                    <div class="input-group"><label>اسم المستخدم (اليوزر)</label><input type="text" id="username" required></div>
+                    <div class="input-group"><label>كلمة المرور</label><input type="password" id="password" required></div>
+                    <p id="login-error" class="error-msg"></p>
+                    <button type="submit" class="btn btn-primary w-100">دخول</button>
+                    <p class="text-center mt-3"><a href="#" onclick="navigateTo('home-page')">العودة للرئيسية</a></p>
+                </form>
+            </div>
+        </section>
+
+        <!-- صفحة الوظائف للمشتركين -->
+        <section id="jobs-page" class="page">
+            <div class="container">
+                <div class="header-flex user-header">
+                    <h2>الوظائف المتاحة</h2>
+                    <div class="user-profile-btn" onclick="openModal('profile-modal')">
+                        <span class="user-icon">👤</span><span id="display-username">الاسم</span>
+                    </div>
+                </div>
+                
+                <div class="search-bar-container">
+                    <input type="text" id="search-input" placeholder="ابحث عن المسمى الوظيفي...">
+                    <select id="pref-filter" class="pref-select">
+                        <option value="">تفضيل الجنسية (الكل)</option><option value="سعودي">سعودي</option><option value="مقيم">مقيم</option>
+                    </select>
+                </div>
+
+                <div class="tabs-container sector-tabs" id="sector-tabs"></div>
+                <div id="jobs-grid" class="jobs-grid full-width-list"></div>
+            </div>
+        </section>
+
+        <!-- لوحة الإدارة -->
+        <section id="admin-page" class="page">
+            <div class="container">
+                <div class="header-flex user-header">
+                    <h2>لوحة تحكم الإدارة</h2>
+                    <div class="user-profile-btn" onclick="openModal('profile-modal')">
+                        <span class="user-icon">👑</span><span id="admin-display-username">سلطان</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>إجمالي الوظائف</h3><h2 id="stat-jobs">0</h2></div>
+                    <div class="stat-card"><h3>إجمالي الحسابات</h3><h2 id="stat-users">0</h2></div>
+                </div>
+
+                <div class="tabs-container admin-tabs mt-3">
+                    <button class="tab-btn active" onclick="switchAdminTab('tab-manage-jobs', this)">الوظائف المطروحة</button>
+                    <button class="tab-btn" onclick="switchAdminTab('tab-add-job', this)">إضافة وظيفة</button>
+                    <button class="tab-btn" onclick="switchAdminTab('tab-users', this)">إدارة المستخدمين</button>
+                    <button class="tab-btn" onclick="switchAdminTab('tab-sectors', this)">القطاعات</button>
+                </div>
+
+                <!-- جدول الوظائف -->
+                <div id="tab-manage-jobs" class="admin-tab-content active">
+                    <div class="admin-card">
+                        <table class="admin-table">
+                            <thead><tr><th>المسمى</th><th>القطاع</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
+                            <tbody id="admin-jobs-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- إضافة وظيفة -->
+                <div id="tab-add-job" class="admin-tab-content">
+                    <div class="admin-card">
+                        <form id="add-job-form">
+                            <div class="input-group"><label>المسمى</label><input type="text" id="job-title" required></div>
+                            <div class="input-group"><label>القطاع</label><select id="job-sector" required></select></div>
+                            <div class="input-group"><label>التفضيل</label><select id="job-pref"><option>الكل</option><option>سعودي</option><option>مقيم</option></select></div>
+                            <div class="input-group"><label>رابط التقديم</label><input type="url" id="job-link" required></div>
+                            <div class="input-group"><label>التفاصيل</label><textarea id="job-desc" rows="3" required></textarea></div>
+                            <button type="submit" class="btn btn-primary w-100">نشر الوظيفة</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- إدارة المستخدمين -->
+                <div id="tab-users" class="admin-tab-content">
+                    <div class="admin-card">
+                        <h3>إنشاء حساب جديد</h3>
+                        <form id="add-user-form" class="user-form-grid">
+                            <div class="input-group"><label>نوع الحساب</label><select id="new-role"><option value="user">مشترك عادي</option><option value="admin">مدير (آدمن)</option></select></div>
+                            <div class="input-group"><label>الاسم بالكامل</label><input type="text" id="new-fullname" required></div>
+                            <div class="input-group"><label>العمر</label><input type="number" id="new-age"></div>
+                            <div class="input-group"><label>رقم الجوال</label><input type="text" id="new-phone"></div>
+                            <div class="input-group"><label>الإيميل</label><input type="email" id="new-email"></div>
+                            <div class="input-group"><label>الجنسية</label><input type="text" id="new-nationality"></div>
+                            <hr style="grid-column: 1/-1; border-color:var(--border-color); margin:5px 0;">
+                            <div class="input-group"><label>يوزر الدخول</label><input type="text" id="new-username" required></div>
+                            <div class="input-group"><label>الانتهاء</label><input type="date" id="new-expiry"></div>
+                            <div class="input-group" style="grid-column: 1/-1;"><label>كلمة المرور</label><input type="text" id="new-password" required></div>
+                            <button type="submit" class="btn btn-primary" style="grid-column: 1/-1;">إنشاء الحساب</button>
+                        </form>
+                        <hr><ul id="users-list" class="users-list"></ul>
+                    </div>
+                </div>
+
+                <!-- القطاعات -->
+                <div id="tab-sectors" class="admin-tab-content">
+                    <div class="admin-card">
+                        <form id="add-sector-form" style="display:flex; gap:10px; align-items:end;">
+                            <div class="input-group" style="flex:1;"><label>اسم القطاع الجديد</label><input type="text" id="new-sector-name" required></div>
+                            <button type="submit" class="btn btn-primary" style="height:45px; margin-bottom:1.2rem;">إضافة</button>
+                        </form>
+                        <hr><ul id="sectors-list" class="users-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- الموديلات -->
+    <!-- 1. الملف الشخصي -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-content profile-content">
+            <span class="close-btn" onclick="closeModal('profile-modal')">&times;</span>
+            <div class="profile-header-icon" id="prof-icon">👤</div>
+            <h2 id="profile-name"></h2>
+            <p>حالة الحساب: <span id="profile-expiry" class="badge badge-secondary"></span></p>
+            <hr>
+            <div class="profile-details-grid text-right">
+                <p><strong>الاسم:</strong> <span id="prof-fullname">-</span></p>
+                <p><strong>العمر:</strong> <span id="prof-age">-</span></p>
+                <p><strong>الجوال:</strong> <span id="prof-phone">-</span></p>
+                <p><strong>الإيميل:</strong> <span id="prof-email">-</span></p>
+                <p><strong>الجنسية:</strong> <span id="prof-nationality">-</span></p>
+            </div>
+            <hr>
+            <button id="admin-edit-self-btn" class="btn btn-outline w-100 hidden" onclick="editMyAdminProfile()">✏️ تعديل بياناتي</button>
+            <button class="btn btn-primary w-100 mt-3" onclick="contactSupport()" style="background-color: #25D366; border-color:#25D366;">💬 تواصل مع الدعم الفني</button>
+            <button class="btn btn-danger w-100 mt-3" onclick="logout()">تسجيل الخروج من الحساب</button>
+        </div>
+    </div>
+
+    <!-- 2. تفاصيل الوظيفة -->
+    <div id="job-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('job-modal')">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div class="modal-tags"><span class="badge badge-primary" id="modal-sector"></span><span class="badge badge-secondary" id="modal-pref"></span></div>
+            <div class="modal-body"><p id="modal-desc"></p></div>
+        </div>
+    </div>
+
+    <!-- 3. نافذة تعديل المستخدم/المدير (للآدمن) -->
+    <div id="edit-user-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('edit-user-modal')">&times;</span>
+            <h2>تعديل بيانات الحساب</h2>
+            <form id="edit-user-form" class="user-form-grid" style="max-height: 70vh; overflow-y: auto; padding-right:10px;">
+                <input type="hidden" id="edit-user-id">
+                <div class="input-group"><label>نوع الحساب</label><select id="edit-role"><option value="user">مشترك عادي</option><option value="admin">مدير (آدمن)</option></select></div>
+                <div class="input-group"><label>الاسم</label><input type="text" id="edit-fullname" required></div>
+                <div class="input-group"><label>العمر</label><input type="number" id="edit-age"></div>
+                <div class="input-group"><label>الجوال</label><input type="text" id="edit-phone"></div>
+                <div class="input-group"><label>الإيميل</label><input type="email" id="edit-email"></div>
+                <div class="input-group"><label>الجنسية</label><input type="text" id="edit-nationality"></div>
+                <hr style="grid-column: 1/-1;">
+                <div class="input-group"><label>يوزر الدخول</label><input type="text" id="edit-username" required></div>
+                <div class="input-group"><label>الانتهاء (للمشترك)</label><input type="date" id="edit-expiry"></div>
+                <div class="input-group" style="grid-column: 1/-1;"><label>كلمة مرور جديدة (اتركه فارغاً لعدم التغيير)</label><input type="text" id="edit-password"></div>
+                <button type="submit" class="btn btn-primary w-100" style="grid-column: 1/-1;">حفظ التعديلات</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. نافذة تعديل الوظيفة (للآدمن) -->
+    <div id="edit-job-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('edit-job-modal')">&times;</span>
+            <h2>تعديل بيانات الوظيفة</h2>
+            <form id="edit-job-form">
+                <input type="hidden" id="edit-job-id">
+                <div class="input-group"><label>المسمى</label><input type="text" id="edit-job-title" required></div>
+                <div class="input-group"><label>القطاع</label><select id="edit-job-sector" required></select></div>
+                <div class="input-group"><label>التفضيل</label><select id="edit-job-pref"><option>الكل</option><option>سعودي</option><option>مقيم</option></select></div>
+                <div class="input-group"><label>رابط التقديم</label><input type="url" id="edit-job-link" required></div>
+                <div class="input-group"><label>التفاصيل</label><textarea id="edit-job-desc" rows="3" required></textarea></div>
+                <button type="submit" class="btn btn-primary w-100">حفظ التعديلات</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
